@@ -1,0 +1,43 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" routerLink="">
+        <img src="assets/logo.png"alt="logo" height="50" width="100">
+
+    </a>
+
+    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button" (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+    <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+        <button class="p-link layout-topbar-button">
+            <i class="pi pi-calendar"></i>
+            <span>Calendar</span>
+        </button>
+        <button class="p-link layout-topbar-button" (click)="showNotifications()">
+            <i class="pi pi-user">{{ notificationCount }}</i>
+            <span>Profile</span>
+        </button>
+<!--        <div *ngIf="showNotificationsFlag">-->
+<!--            <ul>-->
+<!--                <li *ngFor="let notification of notificationService.msg">{{ notification }}</li>-->
+<!--            </ul>-->
+<!--        </div>-->
+
+        <p-dialog #notificationsDialog header="Notifications" [(visible)]="showNotificationsFlag" [modal]="true" [style]="{width: '400px'}">
+            <ul class="p-list-unstyled">
+                <li *ngFor="let notification of notificationService.msg">{{ notification }}</li>
+            </ul>
+            <p-footer>
+                <button pButton type="button" label="Close" (click)="hideNotifications()"></button>
+            </p-footer>
+        </p-dialog>
+        <button class="p-link layout-topbar-button" [routerLink]="'/documentation'">
+            <i class="pi pi-cog"></i>
+            <span>Settings</span>
+        </button>
+    </div>
+</div>

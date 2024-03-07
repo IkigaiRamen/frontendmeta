@@ -1,0 +1,202 @@
+<div class="grid">
+
+    <div class="col-12">
+        <p-toast></p-toast>
+        <p-toolbar styleClass="mb-4">
+            <ng-template pTemplate="left">
+                <div class="my-2">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                        (click)="openNew()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger"
+                        (click)="deleteSelectedLabels()"
+                        [disabled]="!selectedLabels || !selectedLabels.length"></button>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="right">
+                <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import"
+                    class="mr-2 inline-block"></p-fileUpload>
+                <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
+                    (click)="dt.exportCSV()"></button>
+            </ng-template>
+            <ng-template pTemplate="right">
+
+                <button pButton pRipple label="See Stat" icon="pi pi-upload" class="p-button-help"
+                    (click)="goToStat()"></button>
+            </ng-template>
+        </p-toolbar>
+        <div class="card">
+            <h5>Row Expand</h5>
+
+            <p-table [value]="labels" dataKey="_id" [expandedRowKeys]="expandedRows" responsiveLayout="scroll">
+                <ng-template pTemplate="caption">
+                    <button pButton icon="pi pi-fw {{isExpanded ? 'pi-minus' : 'pi-plus'}}"
+                        label="{{isExpanded ? 'Collapse All' : 'Expand All'}}" (click)="expandAll()"></button>
+                    <div class="flex table-header"></div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th style="width: 3rem"></th>
+                        <!-- <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th> -->
+                        <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                        <th pSortableColumn="action">Actions <p-sortIcon field="actions"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-label let-expanded="expanded">
+                    <tr>
+
+                        <td>
+                            <p-tableCheckbox [value]="label"></p-tableCheckbox>
+                        </td>
+                        <td>
+                            <button type="button" pButton pRipple [pRowToggler]="label"
+                                class="p-button-text p-button-rounded p-button-plain"
+                                (click)="toggleExpansion(label._id)"
+                                [icon]="isExpanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                        </td>
+                        <!-- <td style="min-width: 12rem;">{{label._id}}</td> -->
+                        <td style="min-width: 10rem;">{{label.name}}</td>
+                        <td>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-success mr-2"
+                                    (click)="addDocument(label)"></button>
+                                <button pButton pRipple icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-success mr-2" (click)="editLabel(label)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                    (click)="deleteLabel(label)"></button>
+
+                                <button pButton pRipple icon="pi pi-info-circle" class="p-button-rounded p-button-info"
+                                    (click)="viewDetails(label._id)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="rowexpansion" let-label>
+                    <tr>
+                        <td colspan="7">
+                            <div class="p-3">
+                                <p-table [value]="label.documentationIds" dataKey="id" responsiveLayout="scroll">
+                                    <ng-template pTemplate="header">
+                    <tr>
+                        <!-- <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th> -->
+                        <th pSortableColumn="country">country <p-sortIcon field="country"></p-sortIcon></th>
+                        <th pSortableColumn="description">Description<p-sortIcon field="description"></p-sortIcon></th>
+                        <th pSortableColumn="Actions">Actions<p-sortIcon field="actions"></p-sortIcon></th>
+                        <th style="width: 4rem"></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-doc>
+                    <tr>
+                        <!-- <td>{{doc._id}}</td> -->
+                        <td>{{doc.country}}</td>
+                        <td>{{doc.description}}</td>
+                        <td>
+                            <div class="flex">
+
+                                <button pButton pRipple icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-success mr-2"
+                                    (click)="editDocumentation(doc)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                    (click)="deleteDocumentation(doc,label)"></button>
+                            </div>
+                        </td>
+                        <!--                        <td><p-button type="button" icon="pi pi-search"></p-button></td>-->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="4">There are no documents for this label yet.</td>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        </td>
+        </tr>
+        </ng-template>
+        </p-table>
+    </div>
+
+
+    <p-dialog [(visible)]="labelDialog" [style]="{width: '450px'}" header="Label Details" [modal]="true"
+        class="p-fluid">
+        <ng-template pTemplate="content">
+
+            <div class="field">
+                <label for="name">Name</label>
+                <input type="text" pInputText id="name" [(ngModel)]="label.name" required autofocus
+                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !label.name}" />
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !label.name">Name is required.</small>
+            </div>
+
+
+
+
+
+
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="hideDialog()"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                (click)="saveLabel()"></button>
+        </ng-template>
+    </p-dialog>
+
+
+
+    <p-dialog [(visible)]="deleteLabelDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+        <div class="flex align-items-center justify-content-center">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+            <span *ngIf="label">Are you sure you want to delete <b>{{label.name}}</b>?</span>
+        </div>
+        <ng-template pTemplate="footer">
+            <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                (click)="deleteLabelDialog = false"></button>
+            <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                (click)="confirmDelete()"></button>
+        </ng-template>
+    </p-dialog>
+</div>
+</div>
+
+
+
+
+<p-dialog [(visible)]="documentDialog" [style]="{width: '800px', height: '800px'}" header="Product Details"
+    [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+
+        <div class="field">
+            <label for="country">Country</label>
+            <input type="text" pInputText id="name" [(ngModel)]="document.country" required autofocus
+                [ngClass]="{'ng-invalid ng-dirty' : submitted && !label.name}" />
+        </div>
+        <small class="ng-dirty ng-invalid" *ngIf="submitted && !document.country">Country is required.</small>
+
+        <div class="field relativepos" [style]="{height: '85%'}">
+            <label for="description">Description</label>
+            <!-- <textarea id="description" pInputTextarea [(ngModel)]="document.description" required rows="3"
+                cols="20"></textarea> -->
+            <ckeditor [editor]="Editor" #editor [style]="{height: '100%'}" (change)="onEditorChange($event)">
+            </ckeditor>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialogDoc()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveDoc()"></button>
+    </ng-template>
+</p-dialog>
+<router-outlet></router-outlet>
+
+<!--<div class="content">&ndash;&gt;-->
+<!--       <div *ngFor="let msg of notificationService.msg">-->
+<!--             {{msg}}&ndash;&gt;-->
+<!--        </div>&ndash;&gt;-->
+<!--     </div>-->

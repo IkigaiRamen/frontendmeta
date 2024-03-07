@@ -1,0 +1,16 @@
+:host ::ng-deep .ck-editor__editable_inline {
+    min-height: 500px;
+}
+
+.relativepos {
+    position: relative;
+}
+
+.back {
+    position: absolute;
+    z-index: 6;
+    top: 30px;
+    right: 50px;
+    width: 35px;
+    height: 35px;
+}
