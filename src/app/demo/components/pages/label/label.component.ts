@@ -298,6 +298,9 @@ export class LabelComponent implements OnInit{
                     if (this.isEditDocumentMode) {
                         console.log("this update data request")
                         console.log(this.document);
+                        console.log(this.text)
+                        this.document.description = this.tempText
+                        console.log(this.document)
                         this.docService.updateDocumentation(this.document, this.document._id).subscribe(
                             () => {
                                 this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Documentation updated', life: 3000 });
