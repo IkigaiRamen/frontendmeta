@@ -3,12 +3,16 @@ import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
 import {NotificationServiceService} from "../demo/service/notification-service.service";
 import {Dialog} from "primeng/dialog";
+import { LanguageServiceService } from '../service/language-service.service';
+
 
 @Component({
     selector: 'app-topbar',
     templateUrl: './app.topbar.component.html'
 })
 export class AppTopBarComponent implements OnInit{
+
+    currentLanguage: string = 'English';
 
     items!: MenuItem[];
 
@@ -22,7 +26,7 @@ export class AppTopBarComponent implements OnInit{
     showNotificationsFlag: boolean = false;
 
 
-    constructor(public layoutService: LayoutService,public notificationService: NotificationServiceService) {
+    constructor(public layoutService: LayoutService,public notificationService: NotificationServiceService,public languageServiceService:LanguageServiceService) {
 
     }
 
@@ -32,10 +36,16 @@ export class AppTopBarComponent implements OnInit{
 
     }
 
+
     ngOnInit(): void {
         this.notificationService.notificationCount$.subscribe(count => {
             this.notificationCount = count;
         });
+    }
+    toggleLanguage() {
+        this.currentLanguage = this.currentLanguage === 'English' ? 'French' : 'English';
+        const languageKey = this.currentLanguage === 'English' ? 'en' : 'fr';
+        this.languageServiceService.setCurrentLanguage(languageKey);
     }
 
     hideNotifications() {

@@ -1,12 +1,14 @@
+<!-- label-deatils.component.html -->
+
 <div class="grid">
     <div class="col-12">
         <div class="card">
-            <h5>Label Details</h5>
+            <h5>{{ labelDetailsText }}</h5>
             <div>
                 <p>ID: {{ selectedLabel._id }}</p>
                 <p>Name: {{ selectedLabel.name }}</p>
             </div>
-            <h5>Documentation</h5>
+            <h5>{{ documentationText }}</h5>
             <p-table [value]="selectedLabel.documentationIds" responsiveLayout="scroll">
                 <ng-template pTemplate="header">
                     <tr>
@@ -24,10 +26,12 @@
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="3">There are no documents for this label yet.</td>
+                        <td colspan="3">{{ noDocumentsText }}</td>
                     </tr>
                 </ng-template>
             </p-table>
         </div>
     </div>
 </div>
+
+<div *ngIf="!selectedLabel">Loading...</div>
